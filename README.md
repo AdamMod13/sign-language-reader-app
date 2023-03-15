@@ -1,1 +1,1 @@
-# -sign-language-reader-app
+# Sign language reader app
