@@ -18,8 +18,6 @@ package com.google.mediapipe.examples.gesturerecognizer
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
 import androidx.annotation.VisibleForTesting
@@ -36,10 +34,12 @@ class GestureRecognizerHelper(
     var minHandDetectionConfidence: Float = DEFAULT_HAND_DETECTION_CONFIDENCE,
     var minHandTrackingConfidence: Float = DEFAULT_HAND_TRACKING_CONFIDENCE,
     var minHandPresenceConfidence: Float = DEFAULT_HAND_PRESENCE_CONFIDENCE,
+    var numHands: Int = DEFAULT_HAND_NUMBER,
     var currentDelegate: Int = DELEGATE_CPU,
     var runningMode: RunningMode = RunningMode.IMAGE,
     val context: Context,
-    val gestureRecognizerListener: GestureRecognizerListener? = null
+    val gestureRecognizerListener: GestureRecognizerListener? = null,
+    val isFrontCamera: Boolean = true
 ) {
 
     // For this example this needs to be a var so it can be reset on changes. If the GestureRecognizer
@@ -80,6 +80,7 @@ class GestureRecognizerHelper(
             val optionsBuilder =
                 GestureRecognizer.GestureRecognizerOptions.builder()
                     .setBaseOptions(baseOptions)
+                    .setNumHands(numHands)
                     .setMinHandDetectionConfidence(minHandDetectionConfidence)
                     .setMinTrackingConfidence(minHandTrackingConfidence)
                     .setMinHandPresenceConfidence(minHandPresenceConfidence)
@@ -91,8 +92,7 @@ class GestureRecognizerHelper(
                     .setErrorListener(this::returnLivestreamError)
             }
             val options = optionsBuilder.build()
-            gestureRecognizer =
-                GestureRecognizer.createFromOptions(context, options)
+            gestureRecognizer = GestureRecognizer.createFromOptions(context, options)
         } catch (e: IllegalStateException) {
             gestureRecognizerListener?.onError(
                 "Gesture recognizer failed to initialize. See error logs for " + "details"
@@ -130,9 +130,9 @@ class GestureRecognizerHelper(
             // Rotate the frame received from the camera to be in the same direction as it'll be shown
             postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
 
-            // flip image since we only support front camera
+            val rotation = if (isFrontCamera) -1f else 1f
             postScale(
-                -1f, 1f, imageProxy.width.toFloat(), imageProxy.height.toFloat()
+                rotation, 1f, imageProxy.width.toFloat(), imageProxy.height.toFloat()
             )
         }
 
@@ -161,136 +161,6 @@ class GestureRecognizerHelper(
         gestureRecognizer?.recognizeAsync(mpImage, frameTime)
     }
 
-    // Accepts the URI for a video file loaded from the user's gallery and attempts to run
-    // gesture recognizer inference on the video. This process will evaluate
-    // every frame in the video and attach the results to a bundle that will be
-    // returned.
-    fun recognizeVideoFile(
-        videoUri: Uri,
-        inferenceIntervalMs: Long
-    ): ResultBundle? {
-        if (runningMode != RunningMode.VIDEO) {
-            throw IllegalArgumentException(
-                "Attempting to call recognizeVideoFile" +
-                        " while not using RunningMode.VIDEO"
-            )
-        }
-
-        // Inference time is the difference between the system time at the start and finish of the
-        // process
-        val startTime = SystemClock.uptimeMillis()
-
-        var didErrorOccurred = false
-
-        // Load frames from the video and run the gesture recognizer.
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(context, videoUri)
-        val videoLengthMs =
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                ?.toLong()
-
-        // Note: We need to read width/height from frame instead of getting the width/height
-        // of the video directly because MediaRetriever returns frames that are smaller than the
-        // actual dimension of the video file.
-        val firstFrame = retriever.getFrameAtTime(0)
-        val width = firstFrame?.width
-        val height = firstFrame?.height
-
-        // If the video is invalid, returns a null recognition result
-        if ((videoLengthMs == null) || (width == null) || (height == null)) return null
-
-        // Next, we'll get one frame every frameInterval ms, then run recognizer
-        // on these frames.
-        val resultList = mutableListOf<GestureRecognizerResult>()
-        val numberOfFrameToRead = videoLengthMs.div(inferenceIntervalMs)
-
-        for (i in 0..numberOfFrameToRead) {
-            val timestampMs = i * inferenceIntervalMs // ms
-
-            retriever
-                .getFrameAtTime(
-                    timestampMs * 1000, // convert from ms to micro-s
-                    MediaMetadataRetriever.OPTION_CLOSEST
-                )
-                ?.let { frame ->
-                    // Convert the video frame to ARGB_8888 which is required by the MediaPipe
-                    val argb8888Frame =
-                        if (frame.config == Bitmap.Config.ARGB_8888) frame
-                        else frame.copy(Bitmap.Config.ARGB_8888, false)
-
-                    // Convert the input Bitmap object to an MPImage object to run inference
-                    val mpImage = BitmapImageBuilder(argb8888Frame).build()
-
-                    // Run gesture recognizer using MediaPipe Gesture Recognizer
-                    // API
-                    gestureRecognizer?.recognizeForVideo(mpImage, timestampMs)
-                        ?.let { recognizerResult ->
-                            resultList.add(recognizerResult)
-                        } ?: {
-                        didErrorOccurred = true
-                        gestureRecognizerListener?.onError(
-                            "ResultBundle could not be returned" +
-                                    " in recognizeVideoFile"
-                        )
-                    }
-                }
-                ?: run {
-                    didErrorOccurred = true
-                    gestureRecognizerListener?.onError(
-                        "Frame at specified time could not be" +
-                                " retrieved when recognition in video."
-                    )
-                }
-        }
-
-        retriever.release()
-
-        val inferenceTimePerFrameMs =
-            (SystemClock.uptimeMillis() - startTime).div(numberOfFrameToRead)
-
-        return if (didErrorOccurred) {
-            null
-        } else {
-            ResultBundle(resultList, inferenceTimePerFrameMs, height, width)
-        }
-    }
-
-    // Accepted a Bitmap and runs gesture recognizer inference on it to
-    // return results back to the caller
-    fun recognizeImage(image: Bitmap): ResultBundle? {
-        if (runningMode != RunningMode.IMAGE) {
-            throw IllegalArgumentException(
-                "Attempting to call detectImage" +
-                        " while not using RunningMode.IMAGE"
-            )
-        }
-
-
-        // Inference time is the difference between the system time at the
-        // start and finish of the process
-        val startTime = SystemClock.uptimeMillis()
-
-        // Convert the input Bitmap object to an MPImage object to run inference
-        val mpImage = BitmapImageBuilder(image).build()
-
-        // Run gesture recognizer using MediaPipe Gesture Recognizer API
-        gestureRecognizer?.recognize(mpImage)?.also { recognizerResult ->
-            val inferenceTimeMs = SystemClock.uptimeMillis() - startTime
-            return ResultBundle(
-                listOf(recognizerResult),
-                inferenceTimeMs,
-                image.height,
-                image.width
-            )
-        }
-
-        // If gestureRecognizer?.recognize() returns null, this is likely an error. Returning null
-        // to indicate this.
-        gestureRecognizerListener?.onError(
-            "Gesture Recognizer failed to recognize."
-        )
-        return null
-    }
 
     // Return running status of the recognizer helper
     fun isClosed(): Boolean {
@@ -328,6 +198,7 @@ class GestureRecognizerHelper(
         const val DEFAULT_HAND_DETECTION_CONFIDENCE = 0.5F
         const val DEFAULT_HAND_TRACKING_CONFIDENCE = 0.5F
         const val DEFAULT_HAND_PRESENCE_CONFIDENCE = 0.5F
+        const val DEFAULT_HAND_NUMBER = 2
         const val OTHER_ERROR = 0
         const val GPU_ERROR = 1
     }
