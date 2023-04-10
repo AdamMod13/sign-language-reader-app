@@ -39,7 +39,7 @@ class GestureRecognizerHelper(
     var runningMode: RunningMode = RunningMode.IMAGE,
     val context: Context,
     val gestureRecognizerListener: GestureRecognizerListener? = null,
-    val isFrontCamera: Boolean = true
+    var isFrontCamera: Boolean = true
 ) {
 
     // For this example this needs to be a var so it can be reset on changes. If the GestureRecognizer
