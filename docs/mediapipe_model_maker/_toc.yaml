@@ -1,0 +1,201 @@
+toc:
+- title: mediapipe_model_maker
+  section:
+  - title: Overview
+    path: /mediapipe/api_docs/python/mediapipe_model_maker
+- title: mediapipe_model_maker.gesture_recognizer
+  section:
+  - title: Overview
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/gesture_recognizer
+  - title: Dataset
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/gesture_recognizer/Dataset
+  - title: GestureRecognizer
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/gesture_recognizer/GestureRecognizer
+  - title: GestureRecognizerOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/gesture_recognizer/GestureRecognizerOptions
+  - title: HParams
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/gesture_recognizer/HParams
+  - title: HandDataPreprocessingParams
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/gesture_recognizer/HandDataPreprocessingParams
+  - title: ModelOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/gesture_recognizer/ModelOptions
+- title: mediapipe_model_maker.image_classifier
+  section:
+  - title: Overview
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier
+  - title: Dataset
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier/Dataset
+  - title: HParams
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier/HParams
+  - title: ImageClassifier
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier/ImageClassifier
+  - title: ImageClassifierOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier/ImageClassifierOptions
+  - title: ModelOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier/ModelOptions
+  - title: ModelSpec
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier/ModelSpec
+  - title: SupportedModels
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/image_classifier/SupportedModels
+- title: mediapipe_model_maker.object_detector
+  section:
+  - title: Overview
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector
+  - title: Dataset
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/Dataset
+  - title: HParams
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/HParams
+  - title: ModelOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/ModelOptions
+  - title: ModelSpec
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/ModelSpec
+  - title: ObjectDetector
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/ObjectDetector
+  - title: ObjectDetectorOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/ObjectDetectorOptions
+  - title: QATHParams
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/QATHParams
+  - title: SupportedModels
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/SupportedModels
+  - title: dataset
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset
+    - title: classification_dataset
+      section:
+      - title: Overview
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset/classification_dataset
+      - title: ClassificationDataset
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset/classification_dataset/ClassificationDataset
+  - title: dataset_util
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util
+    - title: COCOCacheFilesWriter
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/COCOCacheFilesWriter
+    - title: CacheFiles
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/CacheFiles
+    - title: CacheFilesWriter
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/CacheFilesWriter
+    - title: PascalVocCacheFilesWriter
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/PascalVocCacheFilesWriter
+    - title: get_cache_files_coco
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/get_cache_files_coco
+    - title: get_cache_files_pascal_voc
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/get_cache_files_pascal_voc
+    - title: get_label_map_coco
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/get_label_map_coco
+    - title: get_label_map_pascal_voc
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/get_label_map_pascal_voc
+    - title: is_cached
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/dataset_util/is_cached
+  - title: hyperparameters
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/hyperparameters
+    - title: hp
+      section:
+      - title: Overview
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/hyperparameters/hp
+  - title: model
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/model
+    - title: ObjectDetectorModel
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/model/ObjectDetectorModel
+  - title: model_options
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/model_options
+  - title: model_spec
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/model_spec
+    - title: mobilenet_v2_spec
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/model_spec/mobilenet_v2_spec
+    - title: file_util
+      section:
+      - title: Overview
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/model_spec/file_util
+      - title: DownloadedFiles
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/model_spec/file_util/DownloadedFiles
+  - title: object_detector
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector
+    - title: classifier
+      section:
+      - title: Overview
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/classifier
+      - title: Classifier
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/classifier/Classifier
+      - title: custom_model
+        section:
+        - title: Overview
+          path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/classifier/custom_model
+        - title: CustomModel
+          path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/classifier/custom_model/CustomModel
+    - title: model_util
+      section:
+      - title: Overview
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util
+      - title: LiteRunner
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/LiteRunner
+      - title: WarmUp
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/WarmUp
+      - title: convert_to_tflite
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/convert_to_tflite
+      - title: get_default_callbacks
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/get_default_callbacks
+      - title: get_lite_runner
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/get_lite_runner
+      - title: get_steps_per_epoch
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/get_steps_per_epoch
+      - title: load_keras_model
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/load_keras_model
+      - title: load_tflite_model_buffer
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/load_tflite_model_buffer
+      - title: save_tflite
+        path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector/model_util/save_tflite
+  - title: object_detector_options
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/object_detector_options
+  - title: preprocessor
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/preprocessor
+    - title: Preprocessor
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/object_detector/preprocessor/Preprocessor
+- title: mediapipe_model_maker.quantization
+  section:
+  - title: Overview
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/quantization
+  - title: QuantizationConfig
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/quantization/QuantizationConfig
+  - title: ds
+    section:
+    - title: Overview
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/quantization/ds
+    - title: Dataset
+      path: /mediapipe/api_docs/python/mediapipe_model_maker/quantization/ds/Dataset
+- title: mediapipe_model_maker.text_classifier
+  section:
+  - title: Overview
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier
+  - title: AverageWordEmbeddingModelOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/AverageWordEmbeddingModelOptions
+  - title: BertModelOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/BertModelOptions
+  - title: CSVParams
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/CSVParams
+  - title: Dataset
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/Dataset
+  - title: HParams
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/HParams
+  - title: SupportedModels
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/SupportedModels
+  - title: TextClassifier
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/TextClassifier
+  - title: TextClassifierOptions
+    path: /mediapipe/api_docs/python/mediapipe_model_maker/text_classifier/TextClassifierOptions
