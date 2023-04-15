@@ -20,6 +20,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.core.RunningMode
@@ -67,6 +68,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         results?.let { gestureRecognizerResult ->
             val lines = mutableListOf<Float>()
             val points = mutableListOf<Float>()
+
+            val recognizedResult = gestureRecognizerResult.gestures()
+            if (recognizedResult.isNotEmpty())
+                Log.i(VIEW_LOG_TAG, "recognized letter: $recognizedResult")
 
             for (landmarks in gestureRecognizerResult.landmarks()) {
                 for (i in landmarkConnections.indices step 2) {
