@@ -63,7 +63,6 @@ class CameraFragment : Fragment(), GestureRecognizerHelper.GestureRecognizerList
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
-    private var cameraFacing = CameraSelector.LENS_FACING_FRONT
 
     /** Blocking ML operations are performed using this executor */
     private lateinit var backgroundExecutor: ExecutorService
@@ -136,7 +135,6 @@ class CameraFragment : Fragment(), GestureRecognizerHelper.GestureRecognizerList
         // Create the Hand Gesture Recognition Helper that will handle the inference
         backgroundExecutor.execute {
             gestureRecognizerHelper = GestureRecognizerHelper(
-                isFrontCamera = cameraFacing == CameraSelector.LENS_FACING_FRONT,
                 context = requireContext(),
                 runningMode = RunningMode.LIVE_STREAM,
                 minHandDetectionConfidence = viewModel.currentMinHandDetectionConfidence,
@@ -277,7 +275,7 @@ class CameraFragment : Fragment(), GestureRecognizerHelper.GestureRecognizerList
         val cameraProvider =
             cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
 
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(cameraFacing).build()
+        val cameraSelector = CameraSelector.Builder().build()
 
         // Preview. Only using the 4:3 ratio because this is the closest to our models
         preview = Preview.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
