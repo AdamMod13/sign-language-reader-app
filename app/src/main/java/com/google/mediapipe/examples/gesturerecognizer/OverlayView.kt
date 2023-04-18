@@ -27,6 +27,7 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 import kotlin.math.max
+import kotlin.math.min
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
@@ -52,11 +53,12 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     }
 
     private fun initPaints() {
-        linePaint.color = Color.WHITE
+        linePaint.color =
+            ContextCompat.getColor(context!!, R.color.mp_color_primary)
         linePaint.strokeWidth = LANDMARK_STROKE_WIDTH
         linePaint.style = Paint.Style.STROKE
 
-        pointPaint.color = ContextCompat.getColor(context!!, R.color.icActive)
+        pointPaint.color = Color.YELLOW
         pointPaint.strokeWidth = LANDMARK_STROKE_WIDTH
         pointPaint.style = Paint.Style.FILL
     }
@@ -67,16 +69,16 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
             val lines = mutableListOf<Float>()
             val points = mutableListOf<Float>()
 
-            if (gestureRecognizerResult.handednesses().isNotEmpty()) {
-                Log.i(VIEW_LOG_TAG, "hand category: ${gestureRecognizerResult.handednesses()}")
-            }
-
             for (landmarks in gestureRecognizerResult.landmarks()) {
                 for (i in landmarkConnections.indices step 2) {
-                    val startX = landmarks[landmarkConnections[i]].x() * imageWidth * scaleFactor
-                    val startY = landmarks[landmarkConnections[i]].y() * imageHeight * scaleFactor
-                    val endX = landmarks[landmarkConnections[i + 1]].x() * imageWidth * scaleFactor
-                    val endY = landmarks[landmarkConnections[i + 1]].y() * imageHeight * scaleFactor
+                    val startX =
+                        landmarks[landmarkConnections[i]].x() * imageWidth * scaleFactor
+                    val startY =
+                        landmarks[landmarkConnections[i]].y() * imageHeight * scaleFactor
+                    val endX =
+                        landmarks[landmarkConnections[i + 1]].x() * imageWidth * scaleFactor
+                    val endY =
+                        landmarks[landmarkConnections[i + 1]].y() * imageHeight * scaleFactor
                     lines.add(startX)
                     lines.add(startY)
                     lines.add(endX)
