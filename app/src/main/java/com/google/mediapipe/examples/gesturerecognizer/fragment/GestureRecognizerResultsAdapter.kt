@@ -74,6 +74,7 @@ class GestureRecognizerResultsAdapter :
     inner class ViewHolder(private val binding: ItemGestureRecognizerResultBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private val labelsArray = mutableListOf<String>()
         fun bind(label: String?, score: Float?) {
             with(binding) {
                 tvLabel.text = label ?: NO_VALUE
@@ -82,6 +83,18 @@ class GestureRecognizerResultsAdapter :
                     "%.2f",
                     score
                 ) else NO_VALUE
+
+                label?.let {
+                    labelsArray.add(it)
+                    if (labelsArray.size == 20) {
+                        // Po dodaniu 20 etykiet zwracamy najczęściej występującą
+                        val halfArraySize = labelsArray.size / 2
+                        val mostCommonLabel = labelsArray.groupingBy { it }.eachCount().filter { it.value >= halfArraySize }.maxByOrNull { it.value }?.key
+                        labelsArray.clear()
+                        mostCommonLabel?.takeIf { it.isNotBlank() }?.let { nonBlankLabel ->
+                            textLabel.text = textLabel.text.toString() + nonBlankLabel
+                        }                    }
+                }
             }
         }
     }
