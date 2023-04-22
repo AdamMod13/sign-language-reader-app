@@ -20,14 +20,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 import kotlin.math.max
-import kotlin.math.min
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
@@ -85,7 +83,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                     lines.add(endY)
                     points.add(startX)
                     points.add(startY)
-                    Log.i(VIEW_LOG_TAG, "point($i) = {$startX, $startY}")
+//                    Log.i(VIEW_LOG_TAG, "point($i) = {$startX, $startY}")
                 }
                 canvas.drawLines(lines.toFloatArray(), linePaint)
                 canvas.drawPoints(points.toFloatArray(), pointPaint)

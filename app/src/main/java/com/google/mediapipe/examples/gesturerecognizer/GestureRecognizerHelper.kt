@@ -22,6 +22,7 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.ImageProxy
+import com.google.mediapipe.examples.gesturerecognizer.logic.ContextHolder
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.core.BaseOptions
@@ -156,8 +157,6 @@ class GestureRecognizerHelper(
     // Run hand gesture recognition using MediaPipe Gesture Recognition API
     @VisibleForTesting
     fun recognizeAsync(mpImage: MPImage, frameTime: Long) {
-        // As we're using running mode LIVE_STREAM, the recognition result will
-        // be returned in returnLivestreamResult function
         gestureRecognizer?.recognizeAsync(mpImage, frameTime)
     }
 
@@ -173,6 +172,9 @@ class GestureRecognizerHelper(
     ) {
         val finishTimeMs = SystemClock.uptimeMillis()
         val inferenceTime = finishTimeMs - result.timestampMs()
+        if (!result.gestures().isNullOrEmpty()) {
+            ContextHolder.addGestureResult(result)
+        }
 
         gestureRecognizerListener?.onResults(
             ResultBundle(
@@ -191,7 +193,7 @@ class GestureRecognizerHelper(
 
     companion object {
         val TAG = "GestureRecognizerHelper ${this.hashCode()}"
-        private const val MP_RECOGNIZER_TASK = "pjm.task"
+        private const val MP_RECOGNIZER_TASK = "pjm_v2.task"
 
         const val DELEGATE_CPU = 0
         const val DELEGATE_GPU = 1

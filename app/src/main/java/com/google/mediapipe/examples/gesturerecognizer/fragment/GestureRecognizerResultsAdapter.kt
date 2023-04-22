@@ -20,12 +20,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.mediapipe.examples.gesturerecognizer.databinding.ItemGestureRecognizerResultBinding
+import com.google.mediapipe.examples.gesturerecognizer.logic.ContextHolder
 import com.google.mediapipe.tasks.components.containers.Category
 import java.util.Locale
 import kotlin.math.min
 
-class GestureRecognizerResultsAdapter :
-    RecyclerView.Adapter<GestureRecognizerResultsAdapter.ViewHolder>() {
+class GestureRecognizerResultsAdapter : RecyclerView.Adapter<GestureRecognizerResultsAdapter.ViewHolder>() {
     companion object {
         private const val NO_VALUE = "--"
     }
@@ -82,6 +82,9 @@ class GestureRecognizerResultsAdapter :
                     "%.2f",
                     score
                 ) else NO_VALUE
+
+                ContextHolder.appendLetterToCurrentWord(label)
+                textLabel.text = ContextHolder.currentWord
             }
         }
     }

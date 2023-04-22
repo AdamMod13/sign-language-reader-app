@@ -243,14 +243,6 @@
                 android:minWidth="@dimen/bottom_sheet_spinner_delegate_min_width"
                 android:spinnerMode="dropdown"
                 android:theme="@style/BottomSheetSpinnerItemStyle" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/camera_option"
-                android:layout_width="@dimen/bottom_sheet_control_btn_size"
-                android:layout_height="@dimen/bottom_sheet_control_btn_size"
-                android:contentDescription="@string/alt_bottom_sheet_threshold_button_plus"
-                android:src="@drawable/ic_baseline_photo_library_24" />
-
         </RelativeLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.core.widget.NestedScrollView>
