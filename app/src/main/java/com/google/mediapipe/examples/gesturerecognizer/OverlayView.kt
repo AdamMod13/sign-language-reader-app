@@ -83,7 +83,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                     lines.add(endY)
                     points.add(startX)
                     points.add(startY)
-//                    Log.i(VIEW_LOG_TAG, "point($i) = {$startX, $startY}")
                 }
                 canvas.drawLines(lines.toFloatArray(), linePaint)
                 canvas.drawPoints(points.toFloatArray(), pointPaint)

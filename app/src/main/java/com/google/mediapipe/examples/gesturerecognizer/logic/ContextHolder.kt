@@ -6,10 +6,9 @@ import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult
 
 object ContextHolder {
-    private const val MAX_CAPACITY = 30
+    private const val MAX_CAPACITY = 20
     private const val CONTEXT_HOLDER_TAG = "ContextHolder"
-    private val dynamicSignCandidates
-        = listOf("A", "C", "CZ", "D", "E", "F", "G", "H", "I", "K", "L", "N", "O", "R", "S", "SZ", "Z")
+    private val dynamicSignCandidates = listOf("A", "C", "CZ", "D", "E", "F", "G", "H", "I", "K", "L", "N", "O", "R", "S", "SZ", "Z")
     private val labelsArray = mutableListOf<String>()
     var currentWord: String = ""
 
@@ -25,6 +24,7 @@ object ContextHolder {
                     .maxByOrNull { it.value }?.key
                 labelsArray.clear()
                 mostCommonLabel?.takeIf { it.isNotBlank() }?.let { nonBlankLabel ->
+                    Log.i(CONTEXT_HOLDER_TAG, "adding to current word $nonBlankLabel")
                     currentWord += nonBlankLabel
                 }
                 labelsArray.clear()
@@ -39,10 +39,14 @@ object ContextHolder {
     fun addGestureResult(result: GestureRecognizerResult) {
         if (result.gestures().isNotEmpty()) {
             val gesture = Gesture(result.gestures(), result.landmarks())
-            if (checkIfDynamic(gesture.getCategory()))
-                Log.i(CONTEXT_HOLDER_TAG, "possible dynamic sign")
-
             Log.i(CONTEXT_HOLDER_TAG, gesture.getCategory())
+            appendLetterToCurrentWord(gesture.getCategory())
+
+            if (!checkIfDynamic(gesture.getCategory())) {
+                Log.i(CONTEXT_HOLDER_TAG, "static sign")
+            } else {
+                Log.i(CONTEXT_HOLDER_TAG, "possible dynamic sign")
+            }
         }
     }
 }
@@ -54,6 +58,7 @@ data class Gesture(
     fun getCategory(): String {
         return gesture[0][0].categoryName()
     }
+
     fun getLandmarkArray(): List<NormalizedLandmark> {
         return landmarks[0]
     }
