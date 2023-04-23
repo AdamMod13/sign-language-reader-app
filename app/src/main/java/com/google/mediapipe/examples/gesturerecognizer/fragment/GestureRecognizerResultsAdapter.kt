@@ -83,7 +83,6 @@ class GestureRecognizerResultsAdapter : RecyclerView.Adapter<GestureRecognizerRe
                     score
                 ) else NO_VALUE
 
-                ContextHolder.appendLetterToCurrentWord(label)
                 textLabel.text = ContextHolder.currentWord
             }
         }
