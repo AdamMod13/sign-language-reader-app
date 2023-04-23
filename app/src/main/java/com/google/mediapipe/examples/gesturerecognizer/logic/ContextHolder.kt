@@ -8,11 +8,32 @@ import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 
 
 object ContextHolder {
-    private const val MAX_CAPACITY = 20
+    private const val MAX_CAPACITY = 10
     private const val GESTURE_MAX_CAPACITY = 4
     private const val MOVEMENT_THRESHOLD = 0.2
     private const val CONTEXT_HOLDER_TAG = "ContextHolder"
-    private val dynamicSignCandidates = listOf("A", "C", "CZ", "D", "E", "F", "G", "H", "I", "K", "L", "N", "O", "R", "S", "SZ", "Z")
+
+    // jak to rozwiązać znaki które mają jedynie formę dynamiczną
+    // np. D lub K
+    private val dynamicSignCandidatesMap = mapOf(
+        "A" to "Ą",
+        "C" to "Ć",
+        "CZ" to "CH", // te znaki to weryfikacji
+        "D" to "D",
+        "E" to "Ę",
+        "F" to "F",
+        "G" to "G",
+        "H" to "H",
+        "I" to "J",
+        "K" to "K",
+        "L" to "Ł",
+        "N" to "Ń",
+        "O" to "Ó",
+        "R" to "RZ",
+        "S" to "Ś",
+        "SZ" to "SZ",
+        "Z" to "Ż/Ź"
+    )
     private val labelsArray = mutableListOf<String>()
     private val gesturesArray = ArrayDeque<Gesture>()
     var currentWord: String = ""
@@ -22,47 +43,62 @@ object ContextHolder {
         if (result.gestures().isNotEmpty()) {
             val gesture = Gesture(result.gestures(), result.landmarks())
             addGesture(gesture)
-            Log.i(CONTEXT_HOLDER_TAG, gesture.getCategory())
+
+            if (!doesMatchCurrent(gesture)) {
+                labelsArray.clear()
+            }
 
             if (!isDynamic(gesture.getCategory())) {
                 Log.i(CONTEXT_HOLDER_TAG, "static sign")
                 gesturesArray.clear()
+                appendLetterToCurrentWord(gesture.getCategory())
             } else {
                 Log.i(CONTEXT_HOLDER_TAG, "possible dynamic sign")
-                if (doesMatchCurrent(gesture) && gesturesArray.isNotEmpty()) {
+                if (gesturesArray.isNotEmpty()) {
                     Log.i(CONTEXT_HOLDER_TAG, "current sign matches most")
-                    comparePositions(
-                        gesturesArray.first().getLandmarkArray(),
-                        gesturesArray.last().getLandmarkArray(),
-                        HandLandmark.WRIST
-                    )
+                    matchDynamicGesture(gesture.getCategory())
                 }
             }
-            appendLetterToCurrentWord(gesture.getCategory())
         }
     }
 
-    private fun comparePositions(
-        first: List<NormalizedLandmark>,
-        last: List<NormalizedLandmark>,
-        index: Int
-    ) {
-        // todo: tutaj dodać sensowny threshold
-        if (first[index].y() > last[index].y()) {
-            Log.i(CONTEXT_HOLDER_TAG, "WRIST MOVED DOWN")
-        } else {
-            Log.i(CONTEXT_HOLDER_TAG, "WRIST MOVED UP")
+    private fun checkHandMovement(
+        first: List<NormalizedLandmark>, last: List<NormalizedLandmark>
+    ): Float {
+        return last[HandLandmark.WRIST].y() - first[HandLandmark.WRIST].y()
+    }
+
+    private fun matchDynamicGesture(label: String) {
+        Log.i(CONTEXT_HOLDER_TAG, "matching dynamic gesture")
+        when (label) {
+            // z jakeigoś powodu O nie działa ???
+            "N", "O", "C" -> {
+                Log.i(CONTEXT_HOLDER_TAG, "matching N")
+                val movement = checkHandMovement(
+                    gesturesArray.first().getLandmarkArray(),
+                    gesturesArray.last().getLandmarkArray()
+                )
+                Log.i(CONTEXT_HOLDER_TAG, "movement is $movement")
+                if (movement < 0) {
+                    dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
+                } else {
+                    appendLetterToCurrentWord(label)
+                }
+            }
+            else -> {
+                gesturesArray.clear()
+                appendLetterToCurrentWord(label)
+            }
         }
     }
 
-    // czy to jest potrzebne ???
     private fun doesMatchCurrent(candidate: Gesture): Boolean {
         val count = gesturesArray.count { it.getCategory() == candidate.getCategory() }
         return count > gesturesArray.size - (GESTURE_MAX_CAPACITY / 2)
     }
 
     private fun isDynamic(label: String): Boolean {
-        return label in dynamicSignCandidates
+        return label in dynamicSignCandidatesMap
     }
 
     private fun addGesture(gesture: Gesture) {
@@ -76,6 +112,7 @@ object ContextHolder {
     }
 
     private fun appendLetterToCurrentWord(label: String) {
+        Log.i(CONTEXT_HOLDER_TAG, "appending $label")
         labelsArray.add(label)
         if (labelsArray.size == MAX_CAPACITY) {
             val halfArraySize = labelsArray.size / 2
