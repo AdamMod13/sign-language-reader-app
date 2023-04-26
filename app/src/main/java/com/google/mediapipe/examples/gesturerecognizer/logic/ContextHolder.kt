@@ -10,11 +10,8 @@ import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 object ContextHolder {
     private const val MAX_CAPACITY = 10
     private const val GESTURE_MAX_CAPACITY = 4
-    private const val MOVEMENT_THRESHOLD = 0.2
     private const val CONTEXT_HOLDER_TAG = "ContextHolder"
 
-    // jak to rozwiązać znaki które mają jedynie formę dynamiczną
-    // np. D lub K
     private val dynamicSignCandidatesMap = mapOf(
         "A" to "Ą",
         "C" to "Ć",
@@ -35,7 +32,7 @@ object ContextHolder {
         "Z" to "Ż/Ź"
     )
     private val labelsArray = mutableListOf<String>()
-    private val gesturesArray = ArrayDeque<Gesture>()
+    private val gesturesArray = ArrayDeque<Gesture>() // first == newest item, last == oldest item
     var currentWord: String = ""
 
     fun addGestureResult(result: GestureRecognizerResult) {
@@ -62,24 +59,18 @@ object ContextHolder {
         }
     }
 
-    private fun checkHandMovement(
-        first: List<NormalizedLandmark>, last: List<NormalizedLandmark>
-    ): Float {
-        return last[HandLandmark.WRIST].y() - first[HandLandmark.WRIST].y()
-    }
+//    private fun checkHandMovement(
+//        first: List<NormalizedLandmark>, last: List<NormalizedLandmark>
+//    ): Float {
+//        return last[HandLandmark.WRIST].y() - first[HandLandmark.WRIST].y()
+//    }
 
     private fun matchDynamicGesture(label: String) {
-        Log.i(CONTEXT_HOLDER_TAG, "matching dynamic gesture")
+        Log.i(CONTEXT_HOLDER_TAG, "matching dynamic gesture\n Letter = $label")
         when (label) {
-            // z jakeigoś powodu O nie działa ???
             "N", "O", "C" -> {
-                Log.i(CONTEXT_HOLDER_TAG, "matching N")
-                val movement = checkHandMovement(
-                    gesturesArray.first().getLandmarkArray(),
-                    gesturesArray.last().getLandmarkArray()
-                )
-                Log.i(CONTEXT_HOLDER_TAG, "movement is $movement")
-                if (movement < 0) {
+                val movement = DownMovementRecognizer().checkHandMovement(gesturesArray)
+                if (movement) {
                     dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
                 } else {
                     appendLetterToCurrentWord(label)
@@ -140,5 +131,41 @@ data class Gesture(
 
     fun getLandmarkArray(): List<NormalizedLandmark> {
         return landmarks[0]
+    }
+}
+
+interface DynamicGestureRecognizer {
+    fun checkHandMovement(gestureList: List<Gesture>): Boolean
+}
+
+class DownMovementRecognizer : DynamicGestureRecognizer {
+    override fun checkHandMovement(gestureList: List<Gesture>): Boolean {
+        return compareFirstAndLastPosition(gestureList.first(), gestureList.last()) < 0
+    }
+
+    // todo: compare sequence of gestures, not first and last
+    private fun compareFirstAndLastPosition(
+        first: Gesture, last: Gesture
+    ): Float {
+        return last.getLandmarkArray()[HandLandmark.WRIST].y() - first.getLandmarkArray()[HandLandmark.WRIST].y()
+    }
+}
+
+class UpMovementRecognizer : DynamicGestureRecognizer {
+    override fun checkHandMovement(gestureList: List<Gesture>): Boolean {
+        val movements = mutableListOf<Float>()
+        for (i in gestureList.indices - 1) {
+            val movement = compareFirstAndLastPosition(gestureList[i], gestureList[i + 1])
+            Log.i("checkHandMovement", "$movement between indexed $i and ${i + 1}")
+            movements.add(movement)
+        }
+        return movements.all { it < 0 }
+    }
+
+    // todo: compare sequence of gestures, not first and last
+    private fun compareFirstAndLastPosition(
+        first: Gesture, last: Gesture
+    ): Float {
+        return last.getLandmarkArray()[HandLandmark.WRIST].y() - first.getLandmarkArray()[HandLandmark.WRIST].y()
     }
 }
