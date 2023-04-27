@@ -32,13 +32,14 @@ object ContextHolder {
         "Z" to "Ż/Ź"
     )
     private val labelsArray = mutableListOf<String>()
-    private val gesturesArray = ArrayDeque<Gesture>() // first == newest item, last == oldest item
+    private val gesturesArray =
+        ArrayDeque<GestureWrapper>() // first == newest item, last == oldest item
     var currentWord: String = ""
 
     fun addGestureResult(result: GestureRecognizerResult) {
         Log.i(CONTEXT_HOLDER_TAG, "$gesturesArray")
         if (result.gestures().isNotEmpty()) {
-            val gesture = Gesture(result.gestures(), result.landmarks())
+            val gesture = GestureWrapper(result.gestures(), result.landmarks())
             addGesture(gesture)
 
             if (!doesMatchCurrent(gesture)) {
@@ -56,6 +57,24 @@ object ContextHolder {
                     matchDynamicGesture(gesture.getCategory())
                 }
             }
+        }
+    }
+
+    private fun appendLetterToCurrentWord(label: String) {
+        Log.i(CONTEXT_HOLDER_TAG, "appending $label")
+        labelsArray.add(label)
+        if (labelsArray.size == MAX_CAPACITY) {
+            val halfArraySize = labelsArray.size / 2
+            val mostCommonLabel = labelsArray
+                .groupingBy { it }
+                .eachCount()
+                .filter { it.value >= halfArraySize }
+                .maxByOrNull { it.value }?.key
+            labelsArray.clear()
+            mostCommonLabel?.takeIf { it.isNotBlank() }?.let { nonBlankLabel ->
+                currentWord += nonBlankLabel
+            }
+            labelsArray.clear()
         }
     }
 
@@ -83,7 +102,7 @@ object ContextHolder {
         }
     }
 
-    private fun doesMatchCurrent(candidate: Gesture): Boolean {
+    private fun doesMatchCurrent(candidate: GestureWrapper): Boolean {
         val count = gesturesArray.count { it.getCategory() == candidate.getCategory() }
         return count > gesturesArray.size - (GESTURE_MAX_CAPACITY / 2)
     }
@@ -92,36 +111,18 @@ object ContextHolder {
         return label in dynamicSignCandidatesMap
     }
 
-    private fun addGesture(gesture: Gesture) {
-        gesturesArray.addFirst(gesture)
+    private fun addGesture(gesture: GestureWrapper) {
+        gesturesArray.addLast(gesture)
         if (gesturesArray.size > GESTURE_MAX_CAPACITY) {
-            gesturesArray.removeLast()
+            gesturesArray.removeFirst()
         }
         if (gesturesArray.none { it.getCategory() == gesture.getCategory() }) {
             gesturesArray.clear()
         }
     }
-
-    private fun appendLetterToCurrentWord(label: String) {
-        Log.i(CONTEXT_HOLDER_TAG, "appending $label")
-        labelsArray.add(label)
-        if (labelsArray.size == MAX_CAPACITY) {
-            val halfArraySize = labelsArray.size / 2
-            val mostCommonLabel = labelsArray
-                .groupingBy { it }
-                .eachCount()
-                .filter { it.value >= halfArraySize }
-                .maxByOrNull { it.value }?.key
-            labelsArray.clear()
-            mostCommonLabel?.takeIf { it.isNotBlank() }?.let { nonBlankLabel ->
-                currentWord += nonBlankLabel
-            }
-            labelsArray.clear()
-        }
-    }
 }
 
-data class Gesture(
+data class GestureWrapper(
     val gesture: MutableList<MutableList<Category>>,
     val landmarks: MutableList<MutableList<NormalizedLandmark>>
 ) {
@@ -135,37 +136,43 @@ data class Gesture(
 }
 
 interface DynamicGestureRecognizer {
-    fun checkHandMovement(gestureList: List<Gesture>): Boolean
+    fun checkHandMovement(gestureList: List<GestureWrapper>): Boolean
 }
 
 class DownMovementRecognizer : DynamicGestureRecognizer {
-    override fun checkHandMovement(gestureList: List<Gesture>): Boolean {
-        return compareFirstAndLastPosition(gestureList.first(), gestureList.last()) < 0
+    override fun checkHandMovement(gestureList: List<GestureWrapper>): Boolean {
+        for (gest in gestureList)
+            Log.i(TAG, "${gest.getLandmarkArray()}")
+        if (gestureList.size < MIN_LENGTH)
+            return false
+        val movements = mutableListOf<Float>()
+        for (i in gestureList.size - 1 downTo 1) {
+            // size = 4
+            // brane indeksy: 3,2; 2,1; 1,0
+            // porownuje (od dołu do gory) najnowszy z drugim najnowszym, w tym przypadku:
+            // roznica powinna byc > 0, bo najnowsza ma byc nizej niz druga najnowsza ->
+            val movement = comparePositions(gestureList[i], gestureList[i - 1])
+            Log.i("checkHandMovement", "$movement between indexed $i and ${i - 1}")
+            movements.add(movement)
+        }
+        return movements.all { it > MOVEMENT_THRESHOLD }
     }
 
-    // todo: compare sequence of gestures, not first and last
-    private fun compareFirstAndLastPosition(
-        first: Gesture, last: Gesture
+    private fun comparePositions(
+        first: GestureWrapper, second: GestureWrapper
     ): Float {
-        return last.getLandmarkArray()[HandLandmark.WRIST].y() - first.getLandmarkArray()[HandLandmark.WRIST].y()
+        return first.getLandmarkArray()[HandLandmark.WRIST].y() - second.getLandmarkArray()[HandLandmark.WRIST].y()
+    }
+
+    companion object {
+        private const val MIN_LENGTH: Int = 4
+        private const val TAG: String = "DownMovementRecognizer"
+        private const val MOVEMENT_THRESHOLD: Float = 0.001F
     }
 }
 
 class UpMovementRecognizer : DynamicGestureRecognizer {
-    override fun checkHandMovement(gestureList: List<Gesture>): Boolean {
-        val movements = mutableListOf<Float>()
-        for (i in gestureList.indices - 1) {
-            val movement = compareFirstAndLastPosition(gestureList[i], gestureList[i + 1])
-            Log.i("checkHandMovement", "$movement between indexed $i and ${i + 1}")
-            movements.add(movement)
-        }
-        return movements.all { it < 0 }
-    }
-
-    // todo: compare sequence of gestures, not first and last
-    private fun compareFirstAndLastPosition(
-        first: Gesture, last: Gesture
-    ): Float {
-        return last.getLandmarkArray()[HandLandmark.WRIST].y() - first.getLandmarkArray()[HandLandmark.WRIST].y()
+    override fun checkHandMovement(gestureList: List<GestureWrapper>): Boolean {
+        return true
     }
 }
