@@ -193,7 +193,7 @@ class GestureRecognizerHelper(
 
     companion object {
         val TAG = "GestureRecognizerHelper ${this.hashCode()}"
-        private const val MP_RECOGNIZER_TASK = "pjm_v2.task"
+        private const val MP_RECOGNIZER_TASK = "pjm_v3.task"
 
         const val DELEGATE_CPU = 0
         const val DELEGATE_GPU = 1

@@ -3,6 +3,8 @@ package com.google.mediapipe.examples.gesturerecognizer.logic
 import android.util.Log
 import com.google.mediapipe.examples.gesturerecognizer.logic.model.GestureWrapper
 import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.impl.DownMovementRecognizer
+import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.impl.LeftMovementRecognizer
+import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.impl.RightMovementRecognizer
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult
 
 
@@ -80,12 +82,33 @@ object ContextHolder {
     private fun matchDynamicGesture(label: String) {
         Log.i(CONTEXT_HOLDER_TAG, "matching dynamic gesture\nLetter = $label")
         when (label) {
-            "N", "O", "C" -> {
+            "N", /*"O", */ "C", "S" -> {
                 val movement = DownMovementRecognizer().checkHandMovement(gesturesArray)
                 if (movement) {
                     dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
                 } else {
                     appendLetterToCurrentWord(label)
+                }
+            }
+            "L" -> {
+                val movement = RightMovementRecognizer().checkHandMovement(gesturesArray)
+                if (movement) {
+                    dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
+                } else {
+                    appendLetterToCurrentWord(label)
+                }
+            }
+            "CZ" -> {
+                val downMovement = DownMovementRecognizer().checkHandMovement(gesturesArray)
+                val leftMovement = LeftMovementRecognizer().checkHandMovement(gesturesArray)
+                if (downMovement && leftMovement) {
+                    dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord("CZ") }
+                }
+                if (downMovement && !leftMovement) {
+                    dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
+                }
+                else {
+                    Log.i(CONTEXT_HOLDER_TAG, "Not moving down or left 😥")
                 }
             }
             else -> {
