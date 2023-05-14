@@ -6,6 +6,7 @@ import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.impl.Dow
 import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.impl.LeftMovementRecognizer
 import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.impl.RightMovementRecognizer
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult
+import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 
 
 object ContextHolder {
@@ -33,8 +34,7 @@ object ContextHolder {
         "Z" to "Ż/Ź"
     )
     private val labelsArray = mutableListOf<String>()
-    private val gesturesArray =
-        ArrayDeque<GestureWrapper>() // first == newest item, last == oldest item
+    private val gesturesArray = ArrayDeque<GestureWrapper>() // first == newest item, last == oldest item
     var currentWord: String = ""
 
     fun addGestureResult(result: GestureRecognizerResult) {
@@ -96,6 +96,25 @@ object ContextHolder {
                     dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
                 } else {
                     appendLetterToCurrentWord(label)
+                }
+            }
+            "H" -> {
+                val movement = DownMovementRecognizer().checkHandMovement(gesturesArray)
+                if (movement) {
+                    dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
+                }
+            }
+            "SZ" -> {
+                val movement = LeftMovementRecognizer().checkHandMovement(gesturesArray)
+                if (movement) {
+                    dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
+                }
+            }
+            "K" -> {
+                val rightMovementThumb = RightMovementRecognizer().checkHandMovement(gesturesArray, HandLandmark.THUMB_TIP)
+                val rightMovementMiddle = RightMovementRecognizer().checkHandMovement(gesturesArray, HandLandmark.MIDDLE_FINGER_TIP)
+                if (rightMovementThumb && rightMovementMiddle) {
+                    dynamicSignCandidatesMap[label]?.let { appendLetterToCurrentWord(it) }
                 }
             }
             "CZ" -> {

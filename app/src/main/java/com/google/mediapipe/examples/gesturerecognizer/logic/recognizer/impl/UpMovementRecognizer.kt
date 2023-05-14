@@ -4,7 +4,8 @@ import android.util.Log
 import com.google.mediapipe.examples.gesturerecognizer.logic.model.GestureWrapper
 import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.DynamicGestureRecognizer
 
-class LeftMovementRecognizer : DynamicGestureRecognizer {
+
+class UpMovementRecognizer : DynamicGestureRecognizer {
     override fun checkHandMovement(gestureList: List<GestureWrapper>, landmarkIndex: Int): Boolean {
         if (gestureList.size < minLength)
             return false
@@ -20,6 +21,6 @@ class LeftMovementRecognizer : DynamicGestureRecognizer {
     private fun comparePositions(
         first: GestureWrapper, second: GestureWrapper, landmarkIndex: Int
     ): Float {
-        return second.getLandmarkArray()[landmarkIndex].x() - first.getLandmarkArray()[landmarkIndex].x()
+        return second.getLandmarkArray()[landmarkIndex].y() - first.getLandmarkArray()[landmarkIndex].y()
     }
 }
