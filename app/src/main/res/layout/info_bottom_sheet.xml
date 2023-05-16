@@ -243,7 +243,6 @@
                 android:minWidth="@dimen/bottom_sheet_spinner_delegate_min_width"
                 android:spinnerMode="dropdown"
                 android:theme="@style/BottomSheetSpinnerItemStyle" />
-
         </RelativeLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.core.widget.NestedScrollView>

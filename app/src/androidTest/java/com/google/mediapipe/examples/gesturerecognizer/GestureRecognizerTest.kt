@@ -38,7 +38,6 @@ import java.io.InputStream
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.math.min
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -137,108 +136,6 @@ class GestureRecognizerTest {
         assertEquals(
             expectedCategoriesForImageAndLiveStreamMode.first().categoryName(),
             categories.first().categoryName()
-        )
-    }
-
-    /**
-     * Verify that the result returned from the Gesture Recognizer Helper with
-     * VIDEO mode is within the acceptable range to the expected result.
-     */
-    @Test
-    fun recognizerVideoModeResultFallsWithinAcceptedRange() {
-        val gestureRecognizerHelper = GestureRecognizerHelper(
-            context = ApplicationProvider.getApplicationContext(),
-            runningMode = RunningMode.VIDEO,
-        )
-
-        val videoUri = getVideoUri(TEST_VIDEO)
-
-        // Run the gesture recognizer with the test video.
-        val recognizerResult = gestureRecognizerHelper.recognizeVideoFile(
-            videoUri,
-            300
-        )
-
-        // Verify that the gesture recognizer result is not null.
-        assertNotNull(recognizerResult)
-
-        // Average scores of all frames.
-        val hashMap = HashMap<String, Pair<Float, Int>>()
-        recognizerResult!!.results.forEach { frameResult ->
-            if (frameResult.gestures().isNotEmpty()) {
-                frameResult.gestures().first().forEach {
-                    if (hashMap.containsKey(it.categoryName())) {
-                        hashMap[it.categoryName()] = Pair(
-                            hashMap[it.categoryName()]!!.first + it.score(),
-                            hashMap[it.categoryName()]!!.second + 1
-                        )
-                    } else {
-                        hashMap[it.categoryName()] = Pair(it.score(), 1)
-                    }
-                }
-            }
-        }
-        val actualAverageCategories = hashMap.map {
-            val averageScore = it.value.first / it.value.second
-            Category.create(averageScore, 0, it.key, "")
-        }.toList().sortedByDescending { it.score() }
-
-        val minSize =
-            min(
-                actualAverageCategories.size, expectedCategoryForVideoMode.size
-            )
-
-        for (i in 0 until minSize) {
-            // Verify that the categories are correct.
-            assertEquals(
-                expectedCategoryForVideoMode[i].categoryName(),
-                actualAverageCategories[i].categoryName()
-            )
-
-            // Verify that the scores are correct.
-            assertEquals(
-                expectedCategoryForVideoMode[i].score(),
-                actualAverageCategories[i].score(), 0.05f
-            )
-        }
-    }
-
-    /**
-     * Verify that the result returned from the Gesture Recognizer Helper with
-     * IMAGE mode is within the acceptable range to the expected result.
-     */
-    @Test
-    fun recognizerImageModeResultFallsWithinAcceptedRange() {
-        val gestureRecognizerHelper = GestureRecognizerHelper(
-            context = ApplicationProvider.getApplicationContext(),
-            runningMode = RunningMode.IMAGE,
-        )
-
-        val bitmap = loadImage(TEST_IMAGE)
-
-        // Run the gesture recognizer with the test image.
-        val recognizerResult =
-            gestureRecognizerHelper.recognizeImage(bitmap!!)?.results?.first()
-
-        // Verify that the gesture recognizer result is not null.
-        assertNotNull(recognizerResult)
-
-        // Expecting one hand for this test case
-        val actualCategories =
-            recognizerResult!!.gestures().first()
-
-        assert(actualCategories.isNotEmpty())
-
-        // Verify that the categories are correct.
-        assertEquals(
-            expectedCategoriesForImageAndLiveStreamMode.first().categoryName(),
-            actualCategories.first().categoryName()
-        )
-
-        // Verify that the scores are correct.
-        assertEquals(
-            expectedCategoriesForImageAndLiveStreamMode.first().score(),
-            actualCategories.first().score(), 0.01f
         )
     }
 

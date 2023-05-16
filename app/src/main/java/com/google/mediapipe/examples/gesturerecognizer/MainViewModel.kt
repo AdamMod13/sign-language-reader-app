@@ -27,14 +27,11 @@ class MainViewModel : ViewModel() {
         .DEFAULT_HAND_PRESENCE_CONFIDENCE
     val currentDelegate: Int get() = _delegate
     val currentMinHandDetectionConfidence: Float
-        get() =
-            _minHandDetectionConfidence
+        get() = _minHandDetectionConfidence
     val currentMinHandTrackingConfidence: Float
-        get() =
-            _minHandTrackingConfidence
+        get() = _minHandTrackingConfidence
     val currentMinHandPresenceConfidence: Float
-        get() =
-            _minHandPresenceConfidence
+        get() = _minHandPresenceConfidence
 
     fun setDelegate(delegate: Int) {
         _delegate = delegate
