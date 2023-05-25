@@ -16,11 +16,14 @@
 package com.google.mediapipe.examples.gesturerecognizer
 
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.mediapipe.examples.gesturerecognizer.databinding.ActivityMainBinding
+import com.google.mediapipe.examples.gesturerecognizer.logic.ContextHolder
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
@@ -41,5 +44,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    fun deletebuttonClick(view: View?) {
+        val textLabel = findViewById<TextView>(R.id.textLabel)
+        textLabel.text = ""
+        ContextHolder.currentWord = ""
+    }
+
+    fun addSpacebuttonClick(view: View?) {
+        val textLabel = findViewById<TextView>(R.id.textLabel)
+        textLabel.text = textLabel.text.toString() + " "
+        ContextHolder.currentWord = textLabel.text.toString() + " "
     }
 }
