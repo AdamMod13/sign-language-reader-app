@@ -51,4 +51,10 @@ class MainActivity : AppCompatActivity() {
         textLabel.text = ""
         ContextHolder.currentWord = ""
     }
+
+    fun addSpacebuttonClick(view: View?) {
+        val textLabel = findViewById<TextView>(R.id.textLabel)
+        textLabel.text = textLabel.text.toString() + " "
+        ContextHolder.currentWord = textLabel.text.toString() + " "
+    }
 }
