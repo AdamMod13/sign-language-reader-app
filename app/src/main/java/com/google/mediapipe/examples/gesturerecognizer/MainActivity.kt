@@ -15,6 +15,7 @@
  */
 package com.google.mediapipe.examples.gesturerecognizer
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -50,11 +51,12 @@ class MainActivity : AppCompatActivity() {
         val textLabel = findViewById<TextView>(R.id.textLabel)
         textLabel.text = ""
         ContextHolder.currentWord = ""
+        ContextHolder.clearGestureArray()
     }
 
+    @SuppressLint("SetTextI18n")
     fun addSpacebuttonClick(view: View?) {
         val textLabel = findViewById<TextView>(R.id.textLabel)
-        textLabel.text = textLabel.text.toString() + " "
         ContextHolder.currentWord = textLabel.text.toString() + " "
     }
 }
