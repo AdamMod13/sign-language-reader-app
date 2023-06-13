@@ -45,6 +45,7 @@ object ContextHolder {
 
             if (!doesMatchCurrent(gesture)) {
                 labelsArray.clear()
+                gesturesArray.clear()
             }
 
             if (!isDynamic(gesture.getCategory())) {
@@ -87,6 +88,7 @@ object ContextHolder {
                 currentWord += nonBlankLabel
             }
             labelsArray.clear()
+            gesturesArray.clear()
         }
     }
 
@@ -128,19 +130,19 @@ object ContextHolder {
                     dynamicSignCandidatesMap[label]?.let { appendDynamicLetterToCurrentWord(it) }
                 }
             }
-            "K" -> {
-                val rightMovementThumb = RightMovementRecognizer().checkHandMovement(
-                    operatingArray,
-                    HandLandmark.THUMB_TIP
-                )
-                val rightMovementMiddle = RightMovementRecognizer().checkHandMovement(
-                    operatingArray,
-                    HandLandmark.MIDDLE_FINGER_TIP
-                )
-                if (rightMovementThumb && rightMovementMiddle) {
-                    dynamicSignCandidatesMap[label]?.let { appendDynamicLetterToCurrentWord(it) }
-                }
-            }
+//            "K" -> {
+//                val rightMovementThumb = RightMovementRecognizer().checkHandMovement(
+//                    operatingArray,
+//                    HandLandmark.THUMB_TIP
+//                )
+//                val rightMovementMiddle = RightMovementRecognizer().checkHandMovement(
+//                    operatingArray,
+//                    HandLandmark.MIDDLE_FINGER_TIP
+//                )
+//                if (rightMovementThumb && rightMovementMiddle) {
+//                    dynamicSignCandidatesMap[label]?.let { appendDynamicLetterToCurrentWord(it) }
+//                }
+//            }
             "CZ" -> {
                 val downMovement = DownMovementRecognizer().checkHandMovement(operatingArray)
                 val leftMovement = LeftMovementRecognizer().checkHandMovement(operatingArray)
@@ -163,15 +165,14 @@ object ContextHolder {
                 }
             }
             else -> {
-                gesturesArray.clear()
-                appendLetterToCurrentWord(label)
+                appendLetterToCurrentWord(label, 3, 15)
             }
         }
     }
 
     private fun doesMatchCurrent(candidate: GestureWrapper): Boolean {
         val count = gesturesArray.count { it.getCategory() == candidate.getCategory() }
-        return count > gesturesArray.size - (GESTURE_MAX_CAPACITY / 2)
+        return count > gesturesArray.size - (GESTURE_MAX_CAPACITY / 4)
     }
 
     private fun isDynamic(label: String): Boolean {

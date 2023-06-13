@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentTop="true"
-            android:background="@color/toolbar_background">
+            android:background="@color/mp_color_primary">
 
             <ImageView
                 android:layout_width="wrap_content"
