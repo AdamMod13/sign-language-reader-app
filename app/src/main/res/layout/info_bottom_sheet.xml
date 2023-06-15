@@ -101,7 +101,9 @@
                     android:layout_width="@dimen/bottom_sheet_control_btn_size"
                     android:layout_height="@dimen/bottom_sheet_control_btn_size"
                     android:contentDescription="@string/alt_bottom_sheet_threshold_button_minus"
-                    android:src="@drawable/ic_minus" />
+                    android:src="@drawable/ic_minus"
+                    android:tint="@android:color/white"
+                    android:background="#FFA300" />
 
                 <TextView
                     android:id="@+id/detection_threshold_value"
@@ -119,7 +121,9 @@
                     android:layout_width="@dimen/bottom_sheet_control_btn_size"
                     android:layout_height="@dimen/bottom_sheet_control_btn_size"
                     android:contentDescription="@string/alt_bottom_sheet_threshold_button_plus"
-                    android:src="@drawable/ic_plus" />
+                    android:src="@drawable/ic_plus"
+                    android:tint="@android:color/white"
+                    android:background="#FFA300"/>
             </LinearLayout>
         </RelativeLayout>
 
@@ -150,7 +154,9 @@
                     android:layout_width="@dimen/bottom_sheet_control_btn_size"
                     android:layout_height="@dimen/bottom_sheet_control_btn_size"
                     android:contentDescription="@string/alt_bottom_sheet_threshold_button_minus"
-                    android:src="@drawable/ic_minus" />
+                    android:src="@drawable/ic_minus"
+                    android:tint="@android:color/white"
+                    android:background="#FFA300" />
 
                 <TextView
                     android:id="@+id/tracking_threshold_value"
@@ -168,7 +174,9 @@
                     android:layout_width="@dimen/bottom_sheet_control_btn_size"
                     android:layout_height="@dimen/bottom_sheet_control_btn_size"
                     android:contentDescription="@string/alt_bottom_sheet_threshold_button_plus"
-                    android:src="@drawable/ic_plus" />
+                    android:src="@drawable/ic_plus"
+                    android:tint="@android:color/white"
+                    android:background="#FFA300"/>
             </LinearLayout>
         </RelativeLayout>
 
@@ -199,7 +207,9 @@
                     android:layout_width="@dimen/bottom_sheet_control_btn_size"
                     android:layout_height="@dimen/bottom_sheet_control_btn_size"
                     android:contentDescription="@string/alt_bottom_sheet_threshold_button_minus"
-                    android:src="@drawable/ic_minus" />
+                    android:src="@drawable/ic_minus"
+                    android:tint="@android:color/white"
+                    android:background="#FFA300"/>
 
                 <TextView
                     android:id="@+id/presence_threshold_value"
@@ -217,7 +227,9 @@
                     android:layout_width="@dimen/bottom_sheet_control_btn_size"
                     android:layout_height="@dimen/bottom_sheet_control_btn_size"
                     android:contentDescription="@string/alt_bottom_sheet_threshold_button_plus"
-                    android:src="@drawable/ic_plus" />
+                    android:src="@drawable/ic_plus"
+                    android:tint="@android:color/white"
+                    android:background="#FFA300"/>
             </LinearLayout>
         </RelativeLayout>
 
