@@ -48,13 +48,18 @@ class MainActivity : AppCompatActivity() {
 
     fun deletebuttonClick(view: View?) {
         val textLabel = findViewById<TextView>(R.id.textLabel)
-        textLabel.text = ""
-        ContextHolder.currentWord = ""
+        val currentText = textLabel.text.toString()
+
+        if (currentText.isNotEmpty()) {
+            val updatedText = currentText.substring(0, currentText.length - 1)
+            textLabel.text = updatedText
+            ContextHolder.currentWord = updatedText
+        }
     }
 
     fun addSpacebuttonClick(view: View?) {
         val textLabel = findViewById<TextView>(R.id.textLabel)
-        textLabel.text = textLabel.text.toString() + " "
-        ContextHolder.currentWord = textLabel.text.toString() + " "
+        textLabel.text = textLabel.text.toString() + "T"
+        ContextHolder.currentWord = textLabel.text.toString() + "T"
     }
 }
