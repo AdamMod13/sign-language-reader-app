@@ -4,8 +4,7 @@ import android.util.Log
 import com.google.mediapipe.examples.gesturerecognizer.logic.model.GestureWrapper
 import com.google.mediapipe.examples.gesturerecognizer.logic.recognizer.DynamicGestureRecognizer
 
-
-class DownMovementRecognizer : DynamicGestureRecognizer {
+class CircleMovementRecognizer : DynamicGestureRecognizer {
     override fun checkHandMovement(gestureList: List<GestureWrapper>, landmarkIndex: Int): Boolean {
         if (gestureList.size < minLength)
             return false
@@ -23,4 +22,5 @@ class DownMovementRecognizer : DynamicGestureRecognizer {
     ): Float {
         return first.getLandmarkArray()[landmarkIndex].y() - second.getLandmarkArray()[landmarkIndex].y()
     }
+
 }
